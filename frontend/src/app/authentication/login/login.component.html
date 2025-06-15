@@ -1,0 +1,47 @@
+<header class="top-bar">
+  <div class="container">
+    <a routerLink="/" class="logo">Inicio</a>
+  </div>
+</header>
+
+<main class="login-container">
+  <h1 class="title">GgStudy</h1>
+
+  <div class="login-box">
+    <div class="login-image">
+      <!-- Image will be handled in CSS background -->
+    </div>
+    
+    <div class="login-form">
+      <form (ngSubmit)="login()">
+        <div class="form-group">
+          <input 
+            type="email" 
+            name="email" 
+            [(ngModel)]="credentials.email" 
+            placeholder="email" 
+            required
+          />
+        </div>
+        
+        <div class="form-group">
+          <input 
+            type="password" 
+            name="contrasena" 
+            [(ngModel)]="credentials.contrasena" 
+            placeholder="password" 
+            required
+          />
+        </div>
+        
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+        
+        <button type="submit" class="login-button" [disabled]="loading">
+          Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+</main> 

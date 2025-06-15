@@ -1,0 +1,34 @@
+<app-header></app-header>
+
+<main class="alumno-container">
+  <div class="content-wrapper">
+    <h1 class="page-title">Panel de Alumno</h1>
+    
+    <div class="alumno-dashboard">
+      <div class="alumno-card" (click)="navigateTo('/dashboard/alumno/mi-curso')" style="background-color: #3498db">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+          </svg>
+        </div>
+        <h2>Mi Curso</h2>
+        <p>Ver información de mi curso actual</p>
+      </div>
+      
+      <div class="alumno-card" (click)="navigateTo('/dashboard/alumno/mis-entregables')" style="background-color: #1abc9c">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h2>Mis Entregables</h2>
+        <p>Ver tareas y entregas pendientes</p>
+      </div>
+    </div>
+  </div>
+</main>

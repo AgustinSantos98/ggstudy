@@ -1,0 +1,66 @@
+.alumno-container {
+  padding: 2rem;
+  min-height: calc(100vh - 60px);
+  background-color: #f5f7fa;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.alumno-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.alumno-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.alumno-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-icon {
+  margin-bottom: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alumno-card h2 {
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.alumno-card p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0;
+  font-size: 1rem;
+}

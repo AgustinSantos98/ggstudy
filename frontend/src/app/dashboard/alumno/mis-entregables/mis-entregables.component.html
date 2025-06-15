@@ -1,0 +1,320 @@
+<app-header></app-header>
+
+<main class="mis-entregables-container">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">Mis Entregables</h1>
+      <div class="botones-navegacion">
+        <button class="btn-secundario" (click)="volverATemas()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+            <polyline points="13 2 13 9 20 9"></polyline>
+          </svg>
+          Temas
+        </button>
+        <button class="btn-volver" (click)="volver()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Inicio
+        </button>
+      </div>
+    </div>
+    
+    <!-- Mensaje de éxito -->
+    <div class="exito-container" *ngIf="mensajeExito">
+      <div class="exito-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <p>{{ mensajeExito }}</p>
+    </div>
+    
+    <!-- Indicador de carga -->
+    <div class="loading-container" *ngIf="cargando">
+      <div class="loading-spinner"></div>
+      <p>Cargando entregables...</p>
+    </div>
+    
+    <!-- Mensaje de error -->
+    <div class="error-container" *ngIf="error">
+      <div class="error-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <p>{{ error }}</p>
+    </div>
+    
+    <!-- Vista de detalles de entrega -->
+    <div class="entrega-detalles" *ngIf="mostrandoDetalleEntrega && entregaSeleccionada && !subiendoEntrega">
+      <div class="detalles-header">
+        <h2>Detalles de entrega</h2>
+        <div class="badge-container">
+          <span class="estado-badge calificada" *ngIf="entregaSeleccionada.calificacion !== null">
+            Calificada
+          </span>
+          <span class="estado-badge entregada" *ngIf="entregaSeleccionada.calificacion === null">
+            Entregada
+          </span>
+        </div>
+      </div>
+      
+      <div class="detalles-info">
+        <div class="info-section">
+          <h3>Información de la tarea</h3>
+          <div class="info-item">
+            <span class="info-label">Título:</span>
+            <span class="info-value">{{ entregaSeleccionada.tarea_titulo || 'Sin título' }}</span>
+          </div>
+          <div class="info-item" *ngIf="entregaSeleccionada.tema_nombre">
+            <span class="info-label">Tema:</span>
+            <span class="info-value">{{ entregaSeleccionada.tema_nombre }}</span>
+          </div>
+          <div class="info-item" *ngIf="entregaSeleccionada.asignatura_nombre">
+            <span class="info-label">Asignatura:</span>
+            <span class="info-value">{{ entregaSeleccionada.asignatura_nombre }}</span>
+          </div>
+        </div>
+        
+        <div class="info-section">
+          <h3>Información de la entrega</h3>
+          <div class="info-item">
+            <span class="info-label">Fecha de entrega:</span>
+            <span class="info-value">{{ entregaSeleccionada.fecha_entrega | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="info-item" *ngIf="entregaSeleccionada.fecha_correccion">
+            <span class="info-label">Fecha de corrección:</span>
+            <span class="info-value">{{ entregaSeleccionada.fecha_correccion | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+        
+        <div class="info-section">
+          <h3>URL del entregable</h3>
+          <div class="input-with-icon readonly">
+            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            <input type="url" [(ngModel)]="urlEntrega" readonly>
+          </div>
+          <div class="acciones-url">
+            <a class="btn-visitar" [href]="urlEntrega" target="_blank" *ngIf="urlEntrega">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              Visitar enlace
+            </a>
+          </div>
+        </div>
+        
+        <div class="info-section" *ngIf="entregaSeleccionada.texto">
+          <h3>Mi comentario</h3>
+          <div class="comentario-container">
+            <p>{{ entregaSeleccionada.texto }}</p>
+          </div>
+        </div>
+        
+        <div class="info-section calificacion-section" *ngIf="entregaSeleccionada.calificacion !== null">
+          <h3>Calificación</h3>
+          <div class="calificacion-container">
+            <div class="calificacion-valor-grande">{{ entregaSeleccionada.calificacion }}</div>
+          </div>
+        </div>
+        
+        <div class="info-section" *ngIf="entregaSeleccionada.feedback">
+          <h3>Feedback del profesor</h3>
+          <div class="feedback-container">
+            <p>{{ entregaSeleccionada.feedback }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detalles-actions">
+        <button class="btn-volver" (click)="cerrarDetallesEntrega()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Volver
+        </button>
+      </div>
+    </div>
+    
+    <!-- Formulario de entrega -->
+    <div class="entrega-form" *ngIf="tareaSeleccionadaId && !subiendoEntrega && !mostrandoDetalleEntrega">
+      <h2>Entregar tarea</h2>
+      <div class="form-group">
+        <label for="url">URL del entregable:</label>
+        <div class="input-with-icon">
+          <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <input type="url" id="url" [(ngModel)]="urlEntrega" placeholder="https://example.com/mi_entrega.pdf" required>
+        </div>
+        <small class="form-hint">Introduce la URL donde has subido tu trabajo (Google Drive, OneDrive, GitHub, etc.)</small>
+      </div>
+      <div class="form-group">
+        <label for="comentario">Comentario (opcional):</label>
+        <textarea id="comentario" [(ngModel)]="comentarioEntrega" rows="4" placeholder="Añade un comentario a tu entrega..."></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancelar" (click)="cancelarEntrega()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          Cancelar
+        </button>
+        <button class="btn-entregar" (click)="enviarEntrega()" [disabled]="!urlEntrega">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          Entregar
+        </button>
+      </div>
+    </div>
+    
+    <!-- Indicador de carga para la entrega -->
+    <div class="loading-container" *ngIf="subiendoEntrega">
+      <div class="loading-spinner"></div>
+      <p>Subiendo entrega...</p>
+    </div>
+    
+    <!-- Lista de tareas -->
+    <div class="entregables-section" *ngIf="!cargando && !error && !tareaSeleccionadaId">
+      <!-- Tareas pendientes -->
+      <div class="tareas-pendientes" *ngIf="tareasPendientes.length > 0">
+        <h2 class="section-title">Tareas pendientes ({{ tareasPendientes.length }})</h2>
+        <div class="tareas-grid">
+          <div class="tarea-card" *ngFor="let tarea of tareasPendientes">
+            <div class="tarea-header" [ngClass]="{'entregada': tareaEntregada(tarea.id) && !tareaCalificada(tarea.id), 'calificada': tareaCalificada(tarea.id)}">
+              <h3>{{ tarea.titulo }}</h3>
+              <span class="estado-badge pendiente" *ngIf="!tareaEntregada(tarea.id)">Pendiente</span>
+              <span class="estado-badge entregada" *ngIf="tareaEntregada(tarea.id) && !tareaCalificada(tarea.id)">Entregada</span>
+              <span class="estado-badge calificada" *ngIf="tareaCalificada(tarea.id)">Calificada</span>
+            </div>
+            <div class="tarea-body">
+              <p class="tarea-descripcion">{{ tarea.descripcion }}</p>
+              
+              <div class="tarea-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Fecha límite:</span>
+                  <span class="meta-value">{{ tarea.fecha_entrega | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Profesor:</span>
+                  <span class="meta-value">{{ obtenerNombreProfesor(tarea) }}</span>
+                </div>
+                <div class="meta-item" *ngIf="tieneMaterialAdjunto(tarea)">
+                  <span class="meta-label">Material adjunto:</span>
+                  <a [href]="tarea.archivo" target="_blank" class="meta-value archivo-link">
+                    {{ tarea.archivo }}
+                  </a>
+                </div>                
+              </div>
+              
+              <div class="tarea-actions">
+                <button class="btn-primary" *ngIf="!tareaEntregada(tarea.id)" (click)="prepararEntrega(tarea.id)">
+                  Entregar
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                </button>
+                <div class="entrega-info" *ngIf="tareaEntregada(tarea.id)">
+                  <div class="calificacion" *ngIf="obtenerEntrega(tarea.id)?.calificacion !== null">
+                    <span class="calificacion-label">Calificación:</span>
+                    <span class="calificacion-valor">{{ obtenerEntrega(tarea.id)?.calificacion }}</span>
+                  </div>
+                  <div class="feedback" *ngIf="obtenerEntrega(tarea.id)?.feedback">
+                    <span class="feedback-label">Feedback:</span>
+                    <p class="feedback-texto">{{ obtenerEntrega(tarea.id)?.feedback }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Entregas realizadas -->
+      <div class="entregas-realizadas" *ngIf="misEntregas.length > 0">
+        <h2 class="section-title">Mis entregas</h2>
+        <div class="entregas-grid">
+          <div class="entrega-card" *ngFor="let entrega of misEntregas">
+            <div class="entrega-header" [ngClass]="{'entregada': entrega.calificacion === null, 'calificada': entrega.calificacion !== null}">
+              <h3>{{ entrega.tarea_titulo || 'Tarea' }}</h3>
+              <span class="estado-badge calificada" *ngIf="entrega.calificacion !== null">Calificada</span>
+              <span class="estado-badge entregada" *ngIf="entrega.calificacion === null">Entregada</span>
+            </div>
+            <div class="entrega-body">
+              <div class="entrega-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Fecha de entrega:</span>
+                  <span class="meta-value">{{ entrega.fecha_entrega | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <div class="meta-item" *ngIf="entrega.fecha_correccion">
+                  <span class="meta-label">Fecha de corrección:</span>
+                  <span class="meta-value">{{ entrega.fecha_correccion | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+              </div>
+              
+              <div class="entrega-comentario" *ngIf="entrega.texto">
+                <h4>Mi comentario:</h4>
+                <p>{{ entrega.texto }}</p>
+              </div>
+              
+              <div class="entrega-calificacion" *ngIf="entrega.calificacion !== null">
+                <div class="calificacion">
+                  <span class="calificacion-label">Calificación:</span>
+                  <span class="calificacion-valor">{{ entrega.calificacion }}</span>
+                </div>
+                <div class="feedback" *ngIf="entrega.feedback">
+                  <h4>Feedback del profesor:</h4>
+                  <p>{{ entrega.feedback }}</p>
+                </div>
+              </div>
+              
+              <button class="btn-ver-detalles" (click)="verDetallesEntrega(entrega)">
+                Ver detalles
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  <line x1="11" y1="8" x2="11" y2="14"></line>
+                  <line x1="8" y1="11" x2="14" y2="11"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mensaje si no hay tareas ni entregas -->
+      <div class="no-entregables" *ngIf="(!temaSeleccionado || tareas.length === 0) && misEntregas.length === 0">
+        <div class="no-entregables-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h2>No hay entregables disponibles</h2>
+        <p>No tienes tareas pendientes ni entregas realizadas.</p>
+      </div>
+    </div>
+  </div>
+</main>

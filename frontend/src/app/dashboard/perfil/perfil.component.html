@@ -1,0 +1,142 @@
+<app-header></app-header>
+
+<main class="dashboard-container">
+  <div class="contenedor-principal">
+    <h1 class="titulo-principal">Área personal</h1>
+    <p class="descripcion-principal">Gestiona tu información personal y académica</p>
+    
+    <!-- Mensaje de carga -->
+    <div *ngIf="cargando" class="estado-mensaje">
+      <div class="icono-carga">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 6v6l4 2"></path>
+        </svg>
+      </div>
+      <p>Cargando información del usuario...</p>
+    </div>
+    
+    <!-- Mensaje de error -->
+    <div *ngIf="error" class="estado-mensaje error">
+      <div class="icono-error">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <p>{{ error }}</p>
+    </div>
+    
+    <!-- Contenido del perfil cuando está cargado -->
+    <div *ngIf="!cargando && !error" class="contenido-perfil">
+      <div class="tarjetas-perfil">
+        <!-- Tarjeta de información personal -->
+        <div class="tarjeta-perfil">
+          <div class="encabezado-tarjeta">
+            <div class="icono-tarjeta">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <h2>Información Personal</h2>
+          </div>
+          
+          <div class="perfil-usuario">
+            <div class="avatar-perfil">
+              <img *ngIf="datosUsuario.foto_perfil_url" [src]="datosUsuario.foto_perfil_url" alt="Foto de perfil" class="imagen-perfil">
+              <div *ngIf="!datosUsuario.foto_perfil_url" class="iniciales-perfil">{{ datosUsuario.nombre?.charAt(0) }}{{ datosUsuario.apellido?.charAt(0) }}</div>
+            </div>
+            <h3>{{ datosUsuario.nombre }} {{ datosUsuario.apellido }}</h3>
+            <span class="etiqueta-rol">{{ datosUsuario.rol }}</span>
+          </div>
+          
+          <div class="lista-detalles">
+            <div class="detalle">
+              <div class="etiqueta">DNI</div>
+              <div class="valor">{{ datosUsuario.dni || 'No disponible' }}</div>
+            </div>
+            
+            <div class="detalle">
+              <div class="etiqueta">Correo electrónico</div>
+              <div class="valor">{{ datosUsuario.email || 'No disponible' }}</div>
+            </div>
+            
+            <div class="detalle">
+              <div class="etiqueta">Teléfono</div>
+              <div class="valor">{{ datosUsuario.telefono || 'No disponible' }}</div>
+            </div>
+            
+            <div class="detalle">
+              <div class="etiqueta">Fecha de nacimiento</div>
+              <div class="valor">
+                <ng-container *ngIf="datosUsuario.fecha_nacimiento; else noDisponible">
+                  {{ datosUsuario.fecha_nacimiento | date:'dd/MM/yyyy' }}
+                </ng-container>
+                <ng-template #noDisponible>No disponible</ng-template>
+              </div>
+            </div>
+          </div>
+          
+          <button class="boton-editar-perfil">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icono-boton">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Editar perfil
+          </button>
+        </div>
+        
+        <!-- Tarjeta de información académica -->
+        <div class="tarjeta-academica">
+          <div class="encabezado-tarjeta">
+            <div class="icono-tarjeta">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <h2>Información Académica</h2>
+          </div>
+          
+          <div class="lista-detalles">
+            <div class="detalle">
+              <div class="etiqueta">Fecha de ingreso</div>
+              <div class="valor">
+                <ng-container *ngIf="datosUsuario.fecha_ingreso; else noDisponible">
+                  {{ datosUsuario.fecha_ingreso | date:'dd/MM/yyyy' }}
+                </ng-container>
+                <ng-template #noDisponible>No disponible</ng-template>
+              </div>
+            </div>
+            
+            <div class="detalle" *ngIf="datosUsuario.fecha_fin">
+              <div class="etiqueta">Fecha de finalización</div>
+              <div class="valor">{{ datosUsuario.fecha_fin | date:'dd/MM/yyyy' }}</div>
+            </div>
+          </div>
+          
+          <div class="acciones-academicas">
+            <a href="#" class="boton-secundario">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icono-boton">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              Ver mis cursos
+            </a>
+            <a href="#" class="boton-secundario">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icono-boton">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              Ver mis tareas
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

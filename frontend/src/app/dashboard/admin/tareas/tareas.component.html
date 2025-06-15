@@ -1,0 +1,236 @@
+<app-header></app-header>
+
+<main class="tareas-container">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">Gestión de Tareas</h1>
+      <button class="btn btn-add" *ngIf="!showNewForm" (click)="toggleNewForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nueva Tarea
+      </button>
+      <button class="btn btn-secondary" *ngIf="showNewForm" (click)="toggleNewForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        Cancelar
+      </button>
+    </div>
+
+    <!-- Form for adding or editing tarea -->
+    <div class="new-form-container" *ngIf="showNewForm">
+      <div class="form-header">
+        <h2>{{ isEditMode ? 'Editar Tarea' : 'Nueva Tarea' }}</h2>
+      </div>
+      
+      <!-- Mostrar error dentro del formulario -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+      
+      <div class="form-body">
+        <div class="form-section">
+          <h3>General</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="asignatura_id">Asignatura</label>
+              <select id="asignatura_id" [(ngModel)]="asignaturaSeleccionada" (change)="onAsignaturaChange(asignaturaSeleccionada)" class="form-control">
+                <option [value]="0">Todas las asignaturas</option>
+                <option *ngFor="let asignatura of asignaturas" [value]="asignatura.id">{{ asignatura.nombre }}</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="tema_id">Tema</label>
+              <select id="tema_id" [(ngModel)]="newTarea.tema_id" class="form-control">
+                <option [value]="0" disabled>Selecciona un tema</option>
+                <option *ngFor="let tema of temasFiltrados" [value]="tema.id">{{ tema.tema_nombre || tema.nombre }}</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="titulo">Título</label>
+              <input type="text" id="titulo" [(ngModel)]="newTarea.titulo" placeholder="Título de la tarea">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fecha_entrega">Fecha de entrega</label>
+              <input type="date" id="fecha_entrega" [(ngModel)]="newTarea.fecha_entrega">
+            </div>
+            
+            <div class="form-group">
+              <label for="visible">Estado</label>
+              <select id="visible" [(ngModel)]="newTarea.visible" class="form-control">
+                <option [ngValue]="true">Visible</option>
+                <option [ngValue]="false">Oculta</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3>Detalles</h3>
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="descripcion">Descripción</label>
+              <textarea id="descripcion" [(ngModel)]="newTarea.descripcion" rows="4" placeholder="Descripción detallada de la tarea"></textarea>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="archivo">Archivo (URL)</label>
+              <input type="text" id="archivo" [(ngModel)]="newTarea.archivo" placeholder="URL del archivo adjunto (opcional)">
+              <small>Enlace al material complementario para esta tarea</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-footer">
+        <button class="btn btn-cancel" (click)="toggleNewForm()">Cancelar</button>
+        <button class="btn btn-save" (click)="saveNewTarea()">{{ isEditMode ? 'Actualizar' : 'Guardar' }}</button>
+      </div>
+    </div>
+
+    <!-- Filtros de búsqueda -->
+    <div class="filter-controls" *ngIf="!showNewForm">
+      <h3>Filtros de búsqueda</h3>
+      <div class="filter-group">
+        <input type="text" [(ngModel)]="filterTitulo" placeholder="Filtrar por título..." class="filter-input" (keyup.enter)="applyFilters()">
+        
+        
+        <select [(ngModel)]="filterTemaId" class="filter-select" (change)="applyFilters()">
+          <option value="">Todos los temas</option>
+          <option *ngFor="let tema of temasFiltrados" [value]="tema.id">{{ tema.tema_nombre || tema.nombre }}</option>
+        </select>
+        
+      </div>
+      <div class="filter-buttons">
+        <button class="btn btn-primary" (click)="applyFilters()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          Aplicar Filtros
+        </button>
+        <button class="btn btn-secondary" (click)="resetFilters()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          Limpiar Filtros
+        </button>
+      </div>
+    </div>
+
+    <!-- Estados de carga, éxito y error -->
+    <div *ngIf="loading" class="loading-spinner">Cargando tareas...</div>
+    <div *ngIf="error && !showNewForm" class="error-message">{{ error }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+    <!-- Lista de tareas -->
+    <div class="table-container" *ngIf="!showNewForm && !loading && !error">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Tema</th>
+            <th>Asignatura</th>
+            <th>Fecha de entrega</th>
+            <th>Estado</th>
+            <th>Creado por</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tarea of tareas">
+            <td>{{ tarea.titulo }}</td>
+            <td>{{ getTemaNombre(tarea) }}</td>
+            <td>{{ getAsignaturaNombre(tarea) }}</td>
+            <td>{{ formatDate(tarea.fecha_entrega) }}</td>
+            <td>
+              <span class="badge" [ngClass]="tarea.visible ? 'badge-success' : 'badge-danger'">
+                {{ tarea.visible ? 'Visible' : 'Oculta' }}
+              </span>
+            </td>
+            <td>{{ getCreadorNombre(tarea) }}</td>
+            <td class="actions-cell">
+              <!-- Todos pueden editar tareas de sus asignaturas asignadas -->
+              <button class="btn-icon btn-edit" title="Editar Tarea" (click)="navigateToEditTarea(tarea.id)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <!-- Solo admin o el profesor que creó la tarea puede eliminarla -->
+              <button class="btn-icon btn-delete" title="Eliminar Tarea" (click)="eliminarTarea(tarea)" 
+                     *ngIf="userRole === 'admin' || (userRole === 'profesor' && tarea.creado_por && tarea.creado_por.toString() === authService.getUserId())">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="tareas.length === 0 && !loading">
+            <td colspan="7" class="no-results">No se encontraron tareas con los filtros aplicados.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Controles de paginación mejorados -->
+    <div class="pagination-controls" *ngIf="totalPages > 0 && !loading && !showNewForm">
+      <div class="pagination-info">
+        <span class="results-count">Total: <strong>{{ totalItems }}</strong> tarea{{ totalItems !== 1 ? 's' : '' }}</span>
+        <span class="page-info">Mostrando página <strong>{{ currentPage }}</strong> de <strong>{{ totalPages }}</strong></span>
+      </div>
+      
+      <div class="pagination-buttons">
+        <!-- Primera página -->
+        <button class="btn btn-pagination btn-icon-only" (click)="goToFirstPage()" [disabled]="currentPage === 1" title="Primera página">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="11 17 6 12 11 7"></polyline>
+            <polyline points="18 17 13 12 18 7"></polyline>
+          </svg>
+        </button>
+        
+        <!-- Anterior -->
+        <button class="btn btn-pagination" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Anterior
+        </button>
+        
+        <!-- Números de página -->
+        <div class="page-numbers">
+          <button *ngFor="let page of getPageArray()" 
+                  [class.active]="page === currentPage" 
+                  [class.ellipsis]="page < 0"
+                  [disabled]="page < 0"
+                  (click)="page > 0 ? onPageChange(page) : null"
+                  class="btn btn-page">
+            {{ page > 0 ? page : '...' }}
+          </button>
+        </div>
+        
+        <!-- Siguiente -->
+        <button class="btn btn-pagination" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
+          Siguiente
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+        
+        <!-- Última página -->
+        <button class="btn btn-pagination btn-icon-only" (click)="goToLastPage()" [disabled]="currentPage === totalPages" title="Última página">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="13 17 18 12 13 7"></polyline>
+            <polyline points="6 17 11 12 6 7"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,85 @@
+<app-header></app-header>
+
+<main class="admin-container">
+  <div class="content-wrapper">
+    <h1 class="page-title">Panel de Administración</h1>
+    
+    <div class="admin-dashboard">
+      <div class="admin-card" (click)="navigateTo('/dashboard/admin/alumnos')" style="background-color: #3498db">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <h2>Alumnos</h2>
+        <p>Gestionar listado de estudiantes</p>
+      </div>
+      
+      <div class="admin-card" (click)="navigateTo('/dashboard/admin/profesores')" style="background-color: #e74c3c">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 7h-3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
+            <path d="M9 7H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
+            <path d="M9 7V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"></path>
+            <path d="M20 7V4a2 2 0 0 0-2-2h-1a2 2 0 0 0-2 2v3"></path>
+          </svg>
+        </div>
+        <h2>Profesores</h2>
+        <p>Gestionar profesorado</p>
+      </div>
+      
+      <div class="admin-card" (click)="navigateTo('/dashboard/admin/cursos')" style="background-color: #2ecc71">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <line x1="12" y1="6" x2="16" y2="6"></line>
+            <line x1="12" y1="10" x2="16" y2="10"></line>
+            <line x1="12" y1="14" x2="16" y2="14"></line>
+          </svg>
+        </div>
+        <h2>Cursos</h2>
+        <p>Gestionar cursos</p>
+      </div>
+      
+      <div class="admin-card" (click)="navigateTo('/dashboard/admin/asignaturas')" style="background-color: #9b59b6">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </div>
+        <h2>Asignaturas</h2>
+        <p>Gestionar asignaturas</p>
+      </div>
+      
+      <div class="admin-card" (click)="navigateTo('/dashboard/admin/temas')" style="background-color: #f39c12">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+            <polyline points="13 2 13 9 20 9"></polyline>
+          </svg>
+        </div>
+        <h2>Temas</h2>
+        <p>Gestionar temas y contenido</p>
+      </div>
+      
+      <div class="admin-card" (click)="navigateTo('/dashboard/admin/tareas')" style="background-color: #1abc9c">
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h2>Tareas</h2>
+        <p>Gestionar tareas y entregas</p>
+      </div>
+    </div>
+  </div>
+</main>

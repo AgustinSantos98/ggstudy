@@ -1,0 +1,59 @@
+<app-header></app-header>
+
+<main class="dashboard-container">
+  <div class="contenedor-principal">
+    <h1 class="titulo-principal">Bienvenido a GgStudy</h1>
+    <p class="descripcion-principal">Plataforma de aprendizaje virtual para gestionar tu actividad académica.</p>
+    
+    <div class="tarjetas-dashboard">
+      <div class="tarjeta">
+        <div class="icono-tarjeta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h2>Tareas pendientes</h2>
+        <p>Revisa y gestiona tus tareas asignadas</p>
+        <a href="#" class="boton-tarjeta">Ver tareas</a>
+      </div>
+      
+      <div class="tarjeta">
+        <div class="icono-tarjeta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <line x1="12" y1="6" x2="16" y2="6"></line>
+            <line x1="12" y1="10" x2="16" y2="10"></line>
+            <line x1="12" y1="14" x2="16" y2="14"></line>
+          </svg>
+        </div>
+        <h2>Mis cursos</h2>
+        <p>Accede a tus cursos y materiales</p>
+        <a routerLink="/dashboard/cursos" class="boton-tarjeta">Ver cursos</a>
+      </div>
+      
+      <div class="tarjeta">
+        <div class="icono-tarjeta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e67e22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <h2>Mi perfil</h2>
+        <p>Gestiona tu información personal</p>
+        <a routerLink="/dashboard/perfil" class="boton-tarjeta">Ver perfil</a>
+      </div>
+    </div>
+    
+    <div class="seccion-actividad">
+      <h2 class="titulo-seccion">Actividad reciente</h2>
+      <div class="item-actividad">
+        <p>No hay actividad reciente para mostrar.</p>
+      </div>
+    </div>
+  </div>
+</main> 

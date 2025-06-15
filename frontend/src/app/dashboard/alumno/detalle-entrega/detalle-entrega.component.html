@@ -1,0 +1,169 @@
+<app-header></app-header>
+
+<main class="detalle-entrega-container">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">Detalles de entrega</h1>
+      <a class="btn-volver" (click)="volver()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Volver a mis entregables
+      </a>
+    </div>
+    
+    <!-- Indicador de carga -->
+    <div class="loading-container" *ngIf="cargando">
+      <div class="loading-spinner"></div>
+      <p>Cargando detalles de la entrega...</p>
+    </div>
+    
+    <!-- Mensaje de error -->
+    <div class="error-container" *ngIf="error">
+      <div class="error-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <p>{{ error }}</p>
+    </div>
+    
+    <!-- Detalles de la entrega -->
+    <div class="entrega-detalles-card" *ngIf="!cargando && !error && entrega">
+      <div class="detalles-header">
+        <div class="titulo-container">
+          <h2>{{ entrega.tarea_titulo || 'Entrega de tarea' }}</h2>
+          <span class="estado-badge" [ngClass]="{'calificada': entrega.calificacion !== null, 'pendiente': entrega.calificacion === null}">
+            {{ entrega.calificacion !== null ? 'Calificada' : 'Pendiente de calificación' }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="detalles-content">
+        <!-- Información de la tarea -->
+        <div class="seccion-detalles">
+          <h3 class="seccion-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Información de la tarea
+          </h3>
+          <div class="detalles-grid">
+            <div class="detalle-item">
+              <span class="detalle-label">Título:</span>
+              <span class="detalle-valor">{{ entrega.tarea_titulo || 'Sin título' }}</span>
+            </div>
+            <div class="detalle-item" *ngIf="entrega.tema_nombre">
+              <span class="detalle-label">Tema:</span>
+              <span class="detalle-valor">{{ entrega.tema_nombre }}</span>
+            </div>
+            <div class="detalle-item" *ngIf="entrega.asignatura_nombre">
+              <span class="detalle-label">Asignatura:</span>
+              <span class="detalle-valor">{{ entrega.asignatura_nombre }}</span>
+            </div>
+            <!-- La propiedad curso_nombre no está disponible en el modelo -->
+          </div>
+        </div>
+        
+        <!-- Información de la entrega -->
+        <div class="seccion-detalles">
+          <h3 class="seccion-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Fechas
+          </h3>
+          <div class="detalles-grid">
+            <div class="detalle-item">
+              <span class="detalle-label">Fecha de entrega:</span>
+              <span class="detalle-valor fecha">{{ entrega.fecha_entrega | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <div class="detalle-item" *ngIf="entrega.fecha_correccion">
+              <span class="detalle-label">Fecha de corrección:</span>
+              <span class="detalle-valor fecha">{{ entrega.fecha_correccion | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- URL del entregable -->
+        <div class="seccion-detalles">
+          <h3 class="seccion-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            URL del entregable
+          </h3>
+          <div class="url-container">
+            <div class="url-display">
+              <a [href]="entrega.url" target="_blank" class="url-link">{{ entrega.url }}</a>
+            </div>
+            <a [href]="entrega.url" target="_blank" class="btn-visitar-url">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              Visitar enlace
+            </a>
+          </div>
+        </div>
+        
+        <!-- Comentario de la entrega -->
+        <div class="seccion-detalles" *ngIf="entrega.texto">
+          <h3 class="seccion-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Mi comentario
+          </h3>
+          <div class="comentario-container">
+            <p>{{ entrega.texto }}</p>
+          </div>
+        </div>
+        
+        <!-- Calificación -->
+        <div class="seccion-detalles calificacion-seccion" *ngIf="entrega.calificacion !== null">
+          <h3 class="seccion-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            Calificación
+          </h3>
+          <div class="calificacion-info">
+            <div class="calificacion-container">
+              <div class="calificacion-valor">{{ entrega.calificacion }}</div>
+            </div>
+            <div class="corrector-info" *ngIf="entrega.corrector_nombre || entrega.corrector_apellido">
+              <span class="corrector-label">Corregido por:</span>
+              <span class="corrector-nombre">{{ entrega.corrector_nombre }} {{ entrega.corrector_apellido }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Feedback del profesor -->
+        <div class="seccion-detalles feedback-seccion" *ngIf="entrega.feedback">
+          <h3 class="seccion-titulo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+            </svg>
+            Feedback del profesor
+          </h3>
+          <div class="feedback-container">
+            <p>{{ entrega.feedback }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

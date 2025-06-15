@@ -1,0 +1,175 @@
+<app-header></app-header>
+
+<main class="entregas-container">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">Gestión de Entregas</h1>
+    </div>
+
+    <!-- Mensajes de éxito y error -->
+    <div *ngIf="successMessage" class="success-message">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      {{ error }}
+    </div>
+
+    <!-- Filtros de búsqueda -->
+    <div class="filter-controls">
+      <h3>Filtros de búsqueda</h3>
+      <div class="filter-group">
+        <!-- Filtro por asignatura -->
+        <div class="filter-select">
+          <label for="filtro-asignatura">Asignatura:</label>
+          <select id="filtro-asignatura" [(ngModel)]="filtroAsignatura" (change)="onAsignaturaChange()" class="filter-input">
+            <option [ngValue]="null">Todas las asignaturas</option>
+            <option *ngFor="let asignatura of asignaturas" [ngValue]="asignatura.id">{{ asignatura.nombre }}</option>
+          </select>
+        </div>
+
+        <!-- Filtro por tarea -->
+        <div class="filter-select">
+          <label for="filtro-tarea">Tarea:</label>
+          <select id="filtro-tarea" [(ngModel)]="filtroTarea" (change)="aplicarFiltros()" class="filter-input" [disabled]="!filtroAsignatura">
+            <option [ngValue]="null">Todas las tareas</option>
+            <option *ngFor="let tarea of tareas" [ngValue]="tarea.id">{{ tarea.titulo }}</option>
+          </select>
+        </div>
+
+        <!-- Filtro por alumno -->
+        <div class="filter-select">
+          <label for="filtro-alumno">Alumno:</label>
+          <select id="filtro-alumno" [(ngModel)]="filtroAlumno" (change)="aplicarFiltros()" class="filter-input" [disabled]="!filtroAsignatura">
+            <option [ngValue]="null">Todos los alumnos</option>
+            <option *ngFor="let alumno of alumnos" [ngValue]="alumno.id">{{ alumno.nombre }} {{ alumno.apellido }}</option>
+          </select>
+        </div>
+
+        <!-- Filtro por estado -->
+        <div class="filter-select">
+          <label for="filtro-estado">Estado:</label>
+          <select id="filtro-estado" [(ngModel)]="filtroEstado" (change)="aplicarFiltros()" class="filter-input">
+            <option value="todas">Todas las entregas</option>
+            <option value="corregidas">Corregidas</option>
+            <option value="pendientes">Pendientes de corrección</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-buttons">
+        <button class="btn btn-primary" (click)="aplicarFiltros()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          Aplicar Filtros
+        </button>
+        <button class="btn btn-secondary" (click)="resetearFiltros()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.5 2v6h6M21.5 22v-6h-6"></path>
+            <path d="M22 11.5A10 10 0 0 0 3.2 7.2M2 12.5a10 10 0 0 0 18.8 4.2"></path>
+          </svg>
+          Limpiar Filtros
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabla de entregas -->
+    <div class="table-container" *ngIf="!loading">
+      <table class="data-table" *ngIf="entregasFiltradas.length > 0">
+        <thead>
+          <tr>
+            <th>Alumno</th>
+            <th>Asignatura</th>
+            <th>Tarea</th>
+            <th>Fecha Entrega</th>
+            <th>Estado</th>
+            <th>Calificación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entrega of entregasPaginadas">
+            <td>{{ entrega.alumno_nombre }} {{ entrega.alumno_apellido }}</td>
+            <td>{{ entrega.asignatura_nombre }}</td>
+            <td>{{ entrega.tarea_titulo }}</td>
+            <td>{{ entrega.fecha_entrega | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <span class="badge" [ngClass]="entrega.calificacion !== null ? 'badge-success' : 'badge-warning'">
+                {{ entrega.calificacion !== null ? 'Corregida' : 'Pendiente' }}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="entrega.calificacion !== null">{{ entrega.calificacion }}</span>
+              <span *ngIf="entrega.calificacion === null">-</span>
+            </td>
+            <td>
+              <button class="btn-icon btn-edit" title="Calificar" (click)="calificarEntrega(entrega)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Mensaje cuando no hay entregas -->
+      <div class="no-results" *ngIf="entregasFiltradas.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <p>No se encontraron entregas con los filtros aplicados.</p>
+      </div>
+    </div>
+
+    <!-- Spinner de carga -->
+    <div *ngIf="loading" class="loading-spinner">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="2" x2="12" y2="6"></line>
+        <line x1="12" y1="18" x2="12" y2="22"></line>
+        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+        <line x1="2" y1="12" x2="6" y2="12"></line>
+        <line x1="18" y1="12" x2="22" y2="12"></line>
+        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+      </svg>
+      <p>Cargando entregas...</p>
+    </div>
+
+    <!-- Controles de paginación -->
+    <div class="pagination-controls" *ngIf="totalPages > 0 && !loading">
+      <div class="pagination-info">
+        <span class="results-count">Total: <strong>{{ totalItems }}</strong> entrega{{ totalItems !== 1 ? 's' : '' }}</span>
+        <span class="page-info">Mostrando página <strong>{{ currentPage }}</strong> de <strong>{{ totalPages }}</strong></span>
+      </div>
+      <div class="pagination-buttons">
+        <button class="btn-pagination" [disabled]="currentPage === 1" (click)="cambiarPagina(currentPage - 1)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Anterior
+        </button>
+        <button class="btn-pagination" [disabled]="currentPage === totalPages" (click)="cambiarPagina(currentPage + 1)">
+          Siguiente
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

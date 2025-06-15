@@ -1,0 +1,216 @@
+<app-header></app-header>
+
+<main class="profesores-container">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">Gestión de Profesores</h1>
+      <button class="btn btn-add" *ngIf="!showNewForm" (click)="toggleNewForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nuevo Profesor
+      </button>
+      <button class="btn btn-secondary" *ngIf="showNewForm" (click)="toggleNewForm()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        Cancelar
+      </button>
+    </div>
+
+    <!-- Form for adding or editing professor -->
+    <div class="new-form-container" *ngIf="showNewForm">
+      <div class="form-header">
+        <h2>{{ isEditMode ? 'Editar Profesor' : 'Nuevo Profesor' }}</h2>
+      </div>
+      
+      <!-- Mostrar error dentro del formulario -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+      
+      <div class="form-body">
+        <div class="form-section">
+          <h3>General</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dni">DNI</label>
+              <input type="text" id="dni" [(ngModel)]="newProfesor.dni" placeholder="Introduce el DNI">
+            </div>
+            
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input type="text" id="nombre" [(ngModel)]="newProfesor.nombre" placeholder="Nombre">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="apellido">Apellido</label>
+              <input type="text" id="apellido" [(ngModel)]="newProfesor.apellido" placeholder="Apellido">
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" [(ngModel)]="newProfesor.email" placeholder="correo@ejemplo.com">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+              <input type="date" id="fecha_nacimiento" [(ngModel)]="newProfesor.fecha_nacimiento">
+            </div>
+            
+            <div class="form-group">
+              <label for="fecha_ingreso">Fecha de Ingreso</label>
+              <input type="date" id="fecha_ingreso" [(ngModel)]="newProfesor.fecha_ingreso">
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-section">
+          <h3>Opcional</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="telefono">Teléfono</label>
+              <input type="tel" id="telefono" [(ngModel)]="newProfesor.telefono" placeholder="Teléfono">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-footer">
+        <button class="btn btn-cancel" (click)="toggleNewForm()">Cancelar</button>
+        <button class="btn btn-save" (click)="saveNewProfesor()">{{ isEditMode ? 'Actualizar' : 'Guardar' }}</button>
+      </div>
+    </div>
+
+    <!-- Filtros de búsqueda -->
+    <div class="filter-controls" *ngIf="!showNewForm">
+      <h3>Filtros de búsqueda</h3>
+      <div class="filter-group">
+        <input type="text" [(ngModel)]="filterNombre" placeholder="Filtrar por nombre..." class="filter-input" (keyup.enter)="applyFilters()">
+        <input type="text" [(ngModel)]="filterEmail" placeholder="Filtrar por email..." class="filter-input" (keyup.enter)="applyFilters()">
+        <input type="text" [(ngModel)]="filterDni" placeholder="Filtrar por DNI..." class="filter-input" (keyup.enter)="applyFilters()">
+      </div>
+      <div class="filter-buttons">
+        <button class="btn btn-primary" (click)="applyFilters()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          Aplicar Filtros
+        </button>
+        <button class="btn btn-secondary" (click)="resetFilters()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          Limpiar Filtros
+        </button>
+      </div>
+    </div>
+
+    <!-- Estados de carga, éxito y error -->
+    <div *ngIf="loading" class="loading-spinner">Cargando profesores...</div>
+    <div *ngIf="error && !showNewForm" class="error-message">{{ error }}</div>
+    <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+    <!-- Lista de profesores -->
+    <div class="table-container" *ngIf="!showNewForm && !loading && !error">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nombre completo</th>
+            <th>Roles</th>
+            <th>Email</th>
+            <th>DNI</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let profesor of profesores">
+            <td class="user-cell">
+              <span>{{ profesor.nombre }} {{ profesor.apellido }}</span>
+            </td>
+            <td>{{ profesor.rol | titlecase }}</td>
+            <td>{{ profesor.email }}</td>
+            <td>{{ profesor.dni }}</td>
+            <td class="actions-cell">
+              <button class="btn-icon btn-edit" title="Editar Profesor" (click)="navigateToEditProfesor(profesor.id)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-icon btn-delete" title="Eliminar Profesor" (click)="eliminarProfesor(profesor)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="profesores.length === 0 && !loading">
+            <td colspan="5" class="no-results">{{ error }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Controles de paginación mejorados -->
+    <div class="pagination-controls" *ngIf="totalPages > 0 && !loading && !showNewForm">
+      <div class="pagination-info">
+        <span class="results-count">Total: <strong>{{ totalItems }}</strong> profesor{{ totalItems !== 1 ? 'es' : '' }}</span>
+        <span class="page-info">Mostrando página <strong>{{ currentPage }}</strong> de <strong>{{ totalPages }}</strong></span>
+      </div>
+      
+      <div class="pagination-buttons">
+        <!-- Primera página -->
+        <button class="btn btn-pagination btn-icon-only" (click)="goToFirstPage()" [disabled]="currentPage === 1" title="Primera página">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="11 17 6 12 11 7"></polyline>
+            <polyline points="18 17 13 12 18 7"></polyline>
+          </svg>
+        </button>
+        
+        <!-- Anterior -->
+        <button class="btn btn-pagination" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Anterior
+        </button>
+        
+        <!-- Números de página -->
+        <div class="page-numbers">
+          <ng-container *ngFor="let page of getPageArray()">
+            <button 
+              *ngIf="page > 0" 
+              class="btn-page-number" 
+              [class.active]="page === currentPage"
+              (click)="onPageChange(page)"
+            >
+              {{ page }}
+            </button>
+            <span *ngIf="page === -1" class="page-ellipsis">...</span>
+            <span *ngIf="page === -2" class="page-ellipsis">...</span>
+          </ng-container>
+        </div>
+        
+        <!-- Siguiente -->
+        <button class="btn btn-pagination" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
+          Siguiente
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+        
+        <!-- Última página -->
+        <button class="btn btn-pagination btn-icon-only" (click)="goToLastPage()" [disabled]="currentPage === totalPages" title="Última página">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="13 17 18 12 13 7"></polyline>
+            <polyline points="6 17 11 12 6 7"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</main>

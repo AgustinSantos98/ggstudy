@@ -1,0 +1,156 @@
+<app-header></app-header>
+
+<main class="calificar-entrega-container">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h1 class="page-title">Calificar Entrega</h1>
+      <button class="btn btn-secondary" (click)="volver()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Volver
+      </button>
+    </div>
+
+    <!-- Mensajes de éxito y error -->
+    <div *ngIf="successMessage" class="success-message">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      {{ error }}
+    </div>
+
+    <!-- Spinner de carga -->
+    <div *ngIf="loading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Cargando información de la entrega...</p>
+    </div>
+
+    <!-- Formulario de calificación -->
+    <div class="calificacion-form-container" *ngIf="!loading && entrega">
+      
+      <div class="form-body">
+        <!-- Información de la entrega -->
+        <div class="form-section">
+          <h3>Información de la Entrega</h3>
+          
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Alumno:</span>
+              <span class="info-value">{{ entrega.alumno_nombre }} {{ entrega.alumno_apellido }}</span>
+            </div>
+            
+            <div class="info-item">
+              <span class="info-label">Asignatura:</span>
+              <span class="info-value">{{ entrega.asignatura_nombre || 'No disponible' }}</span>
+            </div>
+            
+            <div class="info-item">
+              <span class="info-label">Tarea:</span>
+              <span class="info-value">{{ entrega.tarea_titulo }}</span>
+            </div>
+            
+            <div class="info-item">
+              <span class="info-label">Fecha de Entrega:</span>
+              <span class="info-value">{{ entrega.fecha_entrega | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Contenido de la entrega -->
+        <div class="form-section">
+          <h3>Contenido de la Entrega</h3>
+          
+          <div class="entrega-content">
+            <!-- URL de la entrega (si existe) -->
+            <div *ngIf="entrega.url" class="entrega-url">
+              <span class="info-label">Archivo adjunto:</span>
+              <a [href]="entrega.url" target="_blank" class="url-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                Ver archivo
+              </a>
+            </div>
+            
+            <!-- Texto de la entrega (si existe) -->
+            <div *ngIf="entrega.texto" class="entrega-texto">
+              <span class="info-label">Texto de la entrega:</span>
+              <div class="texto-content">
+                {{ entrega.texto }}
+              </div>
+            </div>
+            
+            <!-- Mensaje si no hay contenido -->
+            <div *ngIf="!entrega.url && !entrega.texto" class="no-content-message">
+              No hay contenido disponible para esta entrega.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Formulario de calificación -->
+        <div class="form-section">
+          <h3>Calificación</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="calificacion">Calificación (0-10):</label>
+              <input 
+                type="number" 
+                id="calificacion" 
+                [(ngModel)]="calificacionData.calificacion" 
+                min="0" 
+                max="10" 
+                step="0.25"
+                placeholder="Introduce una calificación"
+                [value]="null"
+              >
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="feedback">Comentarios:</label>
+              <textarea 
+                id="feedback" 
+                [(ngModel)]="calificacionData.feedback" 
+                rows="5" 
+                placeholder="Escribe aquí tus comentarios sobre la entrega..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-footer">
+        <button class="btn btn-cancel" (click)="volver()">Cancelar</button>
+        <button class="btn btn-save" (click)="guardarCalificacion()">Guardar Calificación</button>
+      </div>
+    </div>
+    
+    <!-- Mensaje si no se encuentra la entrega -->
+    <div class="not-found-message" *ngIf="!loading && !entrega">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <h2>Entrega no encontrada</h2>
+      <p>No se ha podido encontrar la entrega solicitada.</p>
+      <button class="btn btn-primary" (click)="volver()">Volver a Entregas</button>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,238 @@
+/* Estilos generales */
+.contenido-perfil {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.tarjetas-perfil {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .tarjetas-perfil {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 768px) {
+  .perfil-contenedor {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .tarjeta-perfil {
+    grid-column: 1;
+  }
+  
+  .tarjeta-actividad {
+    grid-column: 2;
+  }
+}
+
+/* Estilos de las tarjetas */
+.tarjeta-perfil, .tarjeta-academica, .estado-mensaje {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tarjeta-perfil:hover, .tarjeta-academica:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.encabezado-tarjeta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.icono-tarjeta {
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.encabezado-tarjeta h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.estado-mensaje {
+  text-align: center;
+  padding: 40px;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.estado-mensaje p {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #666;
+}
+
+.estado-mensaje.error {
+  background-color: #fff8f8;
+  color: #e74c3c;
+}
+
+.icono-carga, .icono-error {
+  margin-bottom: 15px;
+}
+
+/* Estilos del perfil de usuario */
+.perfil-usuario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.avatar-perfil {
+  width: 100px;
+  height: 100px;
+  background-color: #f5f5f5;
+  border: 3px solid #e67e22;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagen-perfil {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.iniciales-perfil {
+  font-size: 36px;
+  font-weight: bold;
+  color: #e67e22;
+  text-transform: uppercase;
+}
+
+.perfil-usuario h3 {
+  margin: 0;
+  font-size: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.etiqueta-rol {
+  display: inline-block;
+  margin: 8px 0 0 0;
+  color: #fff;
+  font-size: 14px;
+  text-transform: capitalize;
+  background-color: #e67e22;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* Estilos de los detalles */
+.lista-detalles {
+  margin-bottom: 25px;
+}
+
+.detalle {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: baseline;
+  border-bottom: 1px solid #f5f5f5;
+  padding-bottom: 10px;
+}
+
+.etiqueta {
+  font-size: 14px;
+  color: #666;
+  width: 40%;
+  font-weight: 500;
+}
+
+.valor {
+  font-size: 15px;
+  color: #e67e22;
+  font-weight: 500;
+  flex: 1;
+}
+
+/* Estilos de botones */
+.boton-editar-perfil {
+  background-color: #e67e22;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.boton-editar-perfil:hover {
+  background-color: #d35400;
+  transform: translateY(-2px);
+}
+
+.icono-boton {
+  margin-right: 8px;
+}
+
+.acciones-academicas {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.boton-secundario {
+  background-color: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.boton-secundario:hover {
+  background-color: #e8e8e8;
+  color: #e67e22;
+  transform: translateX(5px);
+}
+
+/* Resaltar el enlace activo en el sidebar */
+.sidebar a.active {
+  color: #4a6ee0;
+  font-weight: bold;
+} 

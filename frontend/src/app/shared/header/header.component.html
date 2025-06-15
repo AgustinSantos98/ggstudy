@@ -1,0 +1,29 @@
+<header class="cabecera">
+  <div class="contenedor">
+    <a routerLink="/dashboard" class="logo">GgStudy</a>
+    <nav class="navegacion-principal">
+      <a routerLink="/dashboard" class="enlace-nav" routerLinkActive="activo" [routerLinkActiveOptions]="{exact: true}">Página principal</a>
+      <a routerLink="/dashboard/perfil" class="enlace-nav" routerLinkActive="activo">Área personal</a>
+      
+      
+      <!-- Opción para profesores -->
+      <a *ngIf="userRole === 'profesor'" routerLink="/dashboard/profesor" class="enlace-nav" routerLinkActive="activo">Panel de profesor</a>
+      
+      <!-- Opción para administradores -->
+      <a *ngIf="userRole === 'admin'" routerLink="/dashboard/admin" class="enlace-nav" routerLinkActive="activo">Panel de administración</a>
+    </nav>
+    <div class="controles-usuario">
+      <div class="perfil-desplegable" (click)="toggleDropdown()">
+        <div class="avatar-circulo">
+          <img *ngIf="userPhotoUrl" [src]="userPhotoUrl" alt="Foto de perfil" class="imagen-perfil">
+          <div *ngIf="!userPhotoUrl && (userName || userLastName)" class="iniciales-perfil">{{ userName.charAt(0) }}{{ userLastName.charAt(0) }}</div>
+        </div>
+        <div class="flecha-desplegable"></div>
+        <div class="menu-desplegable" *ngIf="showDropdown">
+          <div class="info-usuario">{{ userEmail }} ({{ userRole }})</div>
+          <div class="item-desplegable" (click)="logout()">Cerrar sesión</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
